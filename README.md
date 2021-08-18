@@ -2,4 +2,4 @@
 
 ### Yasuo News - Final Project - Web Development
 
-### Demo Page: [https://yasuo-news.herokuapp.com/](Click here)
+### Demo Page: [Click here][https://yasuo-news.herokuapp.com/]
