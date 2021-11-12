@@ -1,42 +1,9 @@
 {{#section 'css'}}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-    integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
 
-<!-- default icons used in the plugin are from Bootstrap 5.x icon library (which can be enabled by loading CSS below) -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css"
-    crossorigin="anonymous">
-
-<!-- the fileinput plugin styling CSS file -->
-<link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/css/fileinput.min.css" media="all"
-    rel="stylesheet" type="text/css" />
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-
-<!-- piexif.min.js is needed for auto orienting image files OR when restoring exif data in resized images and when you
-    wish to resize images before upload. This must be loaded before fileinput.min.js -->
-<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/plugins/piexif.min.js"
-    type="text/javascript"></script>
-
-<!-- bootstrap.bundle.min.js below is needed if you wish to zoom and preview file content in a detail modal
-    dialog. bootstrap 5.x or 4.x is supported. You can also use the bootstrap js 3.3.x versions. -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous">
-</script>
-
-<!-- the main fileinput plugin script JS file -->
-<script src="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.2.2/js/fileinput.min.js"></script>
 {{/section}}
 
 {{#section 'js'}}
 <script src="/js/admin-manager.js"></script>
-
-<script>
-    // with plugin options
-    $("#file").fileinput({
-        'showUpload': false,
-        'previewFileType': 'any'
-    });
-    $("#file").fileinput('upload').fileinput('disable');
-</script>
 {{/section}}
 
 <div class="card" style="min-width: 44rem;">
@@ -48,7 +15,7 @@
             <div class="col-md-4">
                 <button id="add-script-btn" href="#add_script_modal" class="btn btn-success float-right"
                     data-toggle="modal"><i class="fa fa-plus"></i>
-                    Thêm Script</i></button>
+                    Thêm</i></button>
             </div>
         </div>
         <div class="row my-4">
@@ -62,18 +29,19 @@
                 <div class="form-group">
                     <select id="website-news" class="form-control">
                         <option selected>Chọn trang</option>
-                        <option value="1">Kênh 14</option>
-                        <option value="2">vnExpress</option>
+                        {{#each listAPI}}
+                        <option data-foo="{{this.idAPI}}" value="{{this.link}}">{{this.name}}</option>
+                        {{/each}}
                     </select>
                 </div>
             </div>
             <div class="col-md-4">
                 <button id="del-script-btn" href="#del-script-modal" class="btn btn-danger float-right mx-2"
                     data-toggle="modal"><i class="fa fa-trash" title="Xoá script"></i>
-                    Xoá script</button>
-                <button id="run-script-btn" href="#run-script-modal" class="btn btn-primary float-right mx-2" data-toggle="modal"><i
-                        class="fa fa-files-o" title="Chạy script"></i>
-                    Chạy script</button>
+                    Xoá</button>
+                <button id="run-script-btn" href="#run-script-modal" class="btn btn-primary float-right mx-2"
+                    data-toggle="modal"><i class="fa fa-files-o" title="Chạy script"></i>
+                    Chạy</button>
             </div>
         </div>
     </div>
@@ -83,14 +51,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Xác nhận</h3>
+                <h3>Xác nhận xoá</h3>
             </div>
             <div class="modal-body">
                 <p id="content"></p>
             </div>
             <div class="modal-footer">
-                <form action="#" method="POST" id="form">
-                    <input type="hidden" id="del-script-id" name="id" value="">
+                <form action="/admin/manage/script/del" method="POST" id="formDelScript">
+                    <input type="hidden" id="del" name="id" value="">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
                     <button class="btn btn-primary" type="submit">Xác nhận</a>
                 </form>
@@ -103,14 +71,14 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Chạy Script</h3>
+                <h3>Chạy API</h3>
             </div>
             <div class="modal-body">
                 <p id="content"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary" id="run-confirm">Xác nhận</a>
+                <button class="btn btn-primary" id="run-confirm">Xác nhận</button>
             </div>
         </div>
     </div>
@@ -120,7 +88,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Thêm script mới</h3>
+                <h3>Thêm API mới</h3>
             </div>
             <div class="modal-body">
                 <form action="/admin/manage/script/add" method="POST" id="add-script-form">
@@ -137,14 +105,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row bg-light mx-auto" style="width: fit-content;">
-                        <input id="file" name="file" type="file" class="file" data-browse-on-zone-click="true">
+                    <div class="row m-3">
+                        <div class="col-md-3">
+                            <div class="form-group d-flex align-items-center">
+                                <label class="col-form-label" for="api-link" style="user-select: none;">Nhập link
+                                    API</label>
+                            </div>
+                        </div>
+                        <div class="col-md-9 float-right">
+                            <div class="form-group">
+                                <input class="form-control" id="api-link" type="text" name="apiLink">
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button class="btn btn-primary" type="submit" form="add-script-form">Xác nhận</a>
+                <button class="btn btn-primary" type="submit" form="add-script-form">Xác nhận</button>
             </div>
         </div>
     </div>

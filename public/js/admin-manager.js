@@ -89,7 +89,9 @@ $(document).on("click", ".delComConfirm", function () {
   const id = $(this).data("id");
   const user = $(this).data("content");
 
-  $("#delCommentModal #content").text("Bạn có chắc muốn xóa bình luận của " + user +"?");
+  $("#delCommentModal #content").text(
+    "Bạn có chắc muốn xóa bình luận của " + user + "?"
+  );
   $("#formDelCom #comID").attr("value", id);
 });
 
@@ -110,14 +112,19 @@ $("#btn-post-filter").on("click", function (e) {
   var cate = $("#post-filter #cate").val();
   var tag = $("#post-filter #tag").val();
   var writer = $("#post-filter #writer").val();
-  var status = $("#post-filter #status option:selected").text ();
+  var status = $("#post-filter #status option:selected").text();
   console.log(status);
   if (cate === "Tất cả chuyên mục") cate = "";
   if (tag === "Tất cả thẻ tag") tag = "";
   if (status === "Tất cả trạng thái") status = "";
   if (writer === "Tất cả tác giả") writer = "";
   $("tbody tr").filter(function () {
-    $(this).toggle($(this).text().indexOf(cate) > -1 && $(this).text().indexOf(tag) > -1 && $(this).text().indexOf(writer) > -1 && $(this).text().indexOf(status) > -1);
+    $(this).toggle(
+      $(this).text().indexOf(cate) > -1 &&
+        $(this).text().indexOf(tag) > -1 &&
+        $(this).text().indexOf(writer) > -1 &&
+        $(this).text().indexOf(status) > -1
+    );
   });
 });
 
@@ -125,34 +132,57 @@ $("#frmUpdatePost").on("change", function () {
   $(this).data("changed", true);
 });
 
-$('#frmUpdatePost').on('submit', function (e) {
+$("#frmUpdatePost").on("submit", function (e) {
   if (!$(this).data("changed")) {
     e.preventDefault();
   }
 });
 
-$(document).on('click','#del-script-btn',()=>{
-  const id = $('#website-news').val();
-  const name = $('#website-news option:selected').text();
-  $("#del-script-modal #del-script-id").attr("value",id);
-  let text = (name==="Chọn trang")? "Vui lòng chọn một trang tin!":`Bạn có chắc muốn xoá script lấy tin từ ${name}?`;
-  $('#del-script-modal #content').text(text);
+$(document).on("click", "#del-script-btn", () => {
+  const id = $("#website-news option:selected").data("foo");
+  console.log(id);
+  const name = $("#website-news option:selected").text();
+  $("#del-script-modal #del").attr("value", id);
+  let text =
+    name === "Chọn trang"
+      ? "Vui lòng chọn một trang tin!"
+      : `Bạn có chắc muốn xoá script lấy tin từ ${name}?`;
+  $("#del-script-modal #content").text(text);
 });
 
-$(document).on('click','#run-script-btn',()=>{
-  const name = $('#website-news option:selected').text();
-  let text = (name==="Chọn trang")? "Vui lòng chọn một trang tin!":`Bạn muốn chạy script lấy tin từ ${name}?`;
-  $('#run-script-modal #content').text(text);
+$(document).on("click", "#run-script-btn", () => {
+  const name = $("#website-news option:selected").text();
+  let text =
+    name === "Chọn trang"
+      ? "Vui lòng chọn một trang tin!"
+      : `Bạn muốn chạy script lấy tin từ ${name}?`;
+  $("#run-script-modal #content").text(text);
 });
 
-$(document).on('click', '#run-script-modal #run-confirm', ()=>{
-  const name = $('#website-news option:selected').text();
-  if(name==="Chọn trang")
-    return;
-  const id = $('#website-news').val();
-  $.getJSON(`/admin/manage/run?scriptid=${id}`, data,
-    function (data, textStatus, jqXHR) {
-      
-    }
-  );
+$(document).on("click", "#run-script-modal #run-confirm", () => {
+  const name = $("#website-news option:selected").text();
+  if (name === "Chọn trang") {
+    $("#run-script-modal #content").text("Vui lòng chọn một trang tin tuc.");
+  }
+  else {
+    const link = $("#website-news option:selected").val();
+    console.log("start to run, new " + link);
+    $.ajax({
+      method: "GET",
+      dataType: "json",
+      url: link,
+      contentType: "application/json",
+      success: function (data, status, xhr) {
+        if(data){
+          $("#run-script-modal #content").text("Chạy thành công!");
+        }
+        else{
+          $("#run-script-modal #content").text("Chạy thất bại!");
+        }
+      },
+      error: function( jqXHR,textStatus, errorThrown){
+        $("#run-script-modal #content").text("Chạy thất bại!");
+      }
+    });
+  }
 });
