@@ -130,3 +130,29 @@ $('#frmUpdatePost').on('submit', function (e) {
     e.preventDefault();
   }
 });
+
+$(document).on('click','#del-script-btn',()=>{
+  const id = $('#website-news').val();
+  const name = $('#website-news option:selected').text();
+  $("#del-script-modal #del-script-id").attr("value",id);
+  let text = (name==="Chọn trang")? "Vui lòng chọn một trang tin!":`Bạn có chắc muốn xoá script lấy tin từ ${name}?`;
+  $('#del-script-modal #content').text(text);
+});
+
+$(document).on('click','#run-script-btn',()=>{
+  const name = $('#website-news option:selected').text();
+  let text = (name==="Chọn trang")? "Vui lòng chọn một trang tin!":`Bạn muốn chạy script lấy tin từ ${name}?`;
+  $('#run-script-modal #content').text(text);
+});
+
+$(document).on('click', '#run-script-modal #run-confirm', ()=>{
+  const name = $('#website-news option:selected').text();
+  if(name==="Chọn trang")
+    return;
+  const id = $('#website-news').val();
+  $.getJSON(`/admin/manage/run?scriptid=${id}`, data,
+    function (data, textStatus, jqXHR) {
+      
+    }
+  );
+});

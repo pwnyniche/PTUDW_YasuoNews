@@ -680,4 +680,26 @@ router.get("/manage/user/profile/:id", async function (req, res) {
   });
 });
 
+router.get("/manage/script", (req, res)=>{
+
+  res.render("adminView/webscraping.hbs", {
+    layout: "admin.hbs"
+  });
+});
+
+router.post("/manage/script/add", (req, res)=>{
+  const file = req.body.file;
+  const script_name = req.body.scriptName;
+
+  res.render("adminView/webscraping.hbs", {
+    layout: "admin.hbs"
+  });
+});
+
+router.post("/manage/script/run", (req,res)=>{
+  const id = req.query.scriptid;
+
+  res.json("DUMMY");
+});
+
 module.exports = router;
