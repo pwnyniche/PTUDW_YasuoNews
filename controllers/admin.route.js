@@ -6,6 +6,7 @@ const userModel = require("../models/user.model");
 const newsModel = require("../models/news.model");
 const cateModel = require("../models/category.model");
 const tagModel = require("../models/tag.model");
+const apiModel = require("../models/api.model");
 const bcrypt = require("bcryptjs");
 const fs = require("fs-extra");
 
@@ -680,26 +681,29 @@ router.get("/manage/user/profile/:id", async function (req, res) {
   });
 });
 
-router.get("/manage/script", (req, res)=>{
+router.get("/manage/script", async (req, res)=>{
+  const apis = await apiModel.load();
 
   res.render("adminView/webscraping.hbs", {
-    layout: "admin.hbs"
+    layout: "admin.hbs",
+    title: "Admin | Lấy tin tức",
+    listAPI: apis
   });
 });
 
-router.post("/manage/script/add", (req, res)=>{
-  const file = req.body.file;
+router.post("/manage/script/add", async (req, res)=>{
+  const api_link = req.body.apiLink;
   const script_name = req.body.scriptName;
 
-  res.render("adminView/webscraping.hbs", {
-    layout: "admin.hbs"
-  });
+  await apiModel.addAPI(script_name, api_link);
+
+  res.redirect("/admin/manage/script");
 });
 
-router.post("/manage/script/run", (req,res)=>{
-  const id = req.query.scriptid;
-
-  res.json("DUMMY");
+router.post("/manage/script/del", async (req, res)=>{
+  const idVal = req.body.id;
+  await apiModel.deleteAPI(idVal);
+  res.redirect("/admin/manage/script");
 });
 
 module.exports = router;
