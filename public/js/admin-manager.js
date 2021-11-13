@@ -166,18 +166,19 @@ $(document).on("click", "#run-script-modal #run-confirm", () => {
   }
   else {
     const link = $("#website-news option:selected").val();
-    console.log("start to run, new " + link);
+    $("#run-script-modal #content").text("Vui lòng chờ giây lát...");
     $.ajax({
       method: "GET",
       dataType: "json",
       url: link,
       contentType: "application/json",
       success: function (data, status, xhr) {
-        if(data){
-          $("#run-script-modal #content").text("Chạy thành công!");
+        console.log(data);
+        if(data=='undefined'||data==null||data==false){
+          $("#run-script-modal #content").text("Chạy thất bại!");
         }
         else{
-          $("#run-script-modal #content").text("Chạy thất bại!");
+          $("#run-script-modal #content").text("Chạy thành công!");
         }
       },
       error: function( jqXHR,textStatus, errorThrown){
